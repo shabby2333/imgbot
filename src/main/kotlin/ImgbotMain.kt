@@ -37,7 +37,7 @@ object ImgbotMain : KotlinPlugin(
     JvmPluginDescription(
         id = "icu.shabby.imgbot",
         name = "棒图bot",
-        version = "0.1.0"
+        version = "0.1.1"
     ) {
         author("shabby")
         info("jvm平台重构的棒图bot（群友黑历史处刑）")
@@ -72,7 +72,10 @@ object ImgbotMain : KotlinPlugin(
             // 存图片操作
             if (matchResult.groupValues.size >= 3 && matchResult.groupValues[2].isNotEmpty()) {
                 val imgs = message.filterIsInstance<Image>()
-                if (imgs.isEmpty()) logger.warning("匹配到[图片]，但未找到Image对象，该提示在发送者发'[图片]'时可能不是错误")
+                if (imgs.isEmpty()) {
+                    logger.warning("匹配到[图片]，但未找到Image对象，该提示在发送者发'[图片]'时可能不是错误")
+                    return@subscribeAlways
+                }
                 val msg = matchResult.groupValues[1]
                 val dir = groupDataPath.resolve(msg)
                 if (!dir.toFile().exists()) dir.toFile().mkdirs()
@@ -91,6 +94,9 @@ object ImgbotMain : KotlinPlugin(
                         if (file.exists()) file.delete()
                         file.createNewFile()
                         file.writeBytes(memory)
+
+                        logger.info("[${group.id}]: [${sender.nick}(${sender.id})]发送的图片已经存储到${file.absolutePath}")
+                        group.sendMessage("存好啦~")
                     } finally {
                         stream?.close()
                     }
