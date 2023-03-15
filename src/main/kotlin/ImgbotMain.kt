@@ -30,14 +30,14 @@ import kotlin.random.Random
 
 // PERFIX不可为 正则需要转义的字符串
 val PERFIX = "/"
-val _imageRegex = Regex("""^${PERFIX}([\S^\[]+)\s*(\[图片]\s*)*\s*${'$'}""")
+val _imageRegex = Regex("^$PERFIX([\\S^\\[]+)\\s*(\\[图片]\\s*)*\\s*\$")
 val _random = Random(System.currentTimeMillis())
 
 object ImgbotMain : KotlinPlugin(
     JvmPluginDescription(
         id = "icu.shabby.imgbot",
         name = "棒图bot",
-        version = "0.1.1"
+        version = "0.1.2"
     ) {
         author("shabby")
         info("jvm平台重构的棒图bot（群友黑历史处刑）")
@@ -49,6 +49,7 @@ object ImgbotMain : KotlinPlugin(
         val eventChannel = GlobalEventChannel.parentScope(this)
         eventChannel.subscribeAlways<GroupMessageEvent> {
             val messageStr = message.contentToString()
+            logger.debug("收到消息: $messageStr")
 
             // 查询群组对应文件夹是否存在，不存在则创建
             val groupDataPath = resolveDataPath("${group.id}")
@@ -57,6 +58,7 @@ object ImgbotMain : KotlinPlugin(
 
             // ls逻辑
             if (messageStr == "ls") {
+                logger.debug("请求图片关键词列表")
                 val list = groupDataFolder.list()
                 if (null == list || list.isEmpty()) return@subscribeAlways
                 group.sendMessage(list.joinToString(", "))
@@ -69,8 +71,10 @@ object ImgbotMain : KotlinPlugin(
             val matchResult = _imageRegex.find(messageStr)
             if (matchResult == null || matchResult.groups.isEmpty()) return@subscribeAlways
 
+            logger.debug("通过正则校验")
             // 存图片操作
             if (matchResult.groupValues.size >= 3 && matchResult.groupValues[2].isNotEmpty()) {
+                logger.debug("存图片操作")
                 val imgs = message.filterIsInstance<Image>()
                 if (imgs.isEmpty()) {
                     logger.warning("匹配到[图片]，但未找到Image对象，该提示在发送者发'[图片]'时可能不是错误")
@@ -103,7 +107,8 @@ object ImgbotMain : KotlinPlugin(
                 }
             }
             // 取图片操作
-            else {
+            else if (matchResult.groupValues[1].isNotEmpty()) {
+                logger.debug("取图片操作")
                 val msg = matchResult.groupValues[1]
                 val dir = groupDataPath.resolve(msg).toFile()
                 if (!dir.exists()) return@subscribeAlways
