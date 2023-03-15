@@ -37,7 +37,7 @@ object ImgbotMain : KotlinPlugin(
     JvmPluginDescription(
         id = "icu.shabby.imgbot",
         name = "棒图bot",
-        version = "0.1.4"
+        version = "0.1.5"
     ) {
         author("shabby")
         info("jvm平台重构的棒图bot（群友黑历史处刑）")
@@ -84,6 +84,9 @@ object ImgbotMain : KotlinPlugin(
                 val dir = groupDataPath.resolve(msg)
                 if (!dir.toFile().exists()) dir.toFile().mkdirs()
 
+                var success = 0
+                var fail = 0
+                var override = 0
                 imgs.forEach {
                     var stream: InputStream? = null
                     try {
@@ -95,16 +98,28 @@ object ImgbotMain : KotlinPlugin(
                         val fileName = "${md5}.${it.imageType.formatName}"
                         val path = dir.resolve(fileName)
                         val file = path.toFile()
-                        if (file.exists()) file.delete()
+                        if (file.exists()) {
+                            override++
+                            file.delete()
+                        }
                         file.createNewFile()
                         file.writeBytes(memory)
 
+                        success++
                         logger.info("[${group.id}]: [${sender.nick}(${sender.id})]发送的图片已经存储到${file.absolutePath}")
-                        group.sendMessage("加好啦~")
+                    } catch (e: Exception) {
+                        fail++
+                        logger.warning("[${group.id}]: [${sender.nick}(${sender.id})]发送的图片已经存储失败", e)
                     } finally {
                         stream?.close()
                     }
                 }
+
+                group.sendMessage(
+                    "图片共${imgs.size}张存储到: ${msg}, 成功${success}张, 失败${fail}张" +
+                        (if (override > 0) ", hash冲突覆盖${override}张" else "")
+                )
+                return@subscribeAlways
             }
             // 取图片操作
             else if (matchResult.groupValues[1].isNotEmpty()) {
