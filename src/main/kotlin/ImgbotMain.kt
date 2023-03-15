@@ -30,14 +30,14 @@ import kotlin.random.Random
 
 // PERFIX不可为 正则需要转义的字符串
 val PERFIX = "/"
-val _imageRegex = Regex("^$PERFIX([\\u4e00-\\u9fa5\\w]+)\\s*(\\[图片]\\s*)*\\s*\$")
+val _imageRegex = Regex("^$PERFIX([\\u4e00-\\u9fa5\\w]+)\\s*((\\[图片]\\s*)|(\\[动画表情]\\s*))*\\s*\$")
 val _random = Random(System.currentTimeMillis())
 
 object ImgbotMain : KotlinPlugin(
     JvmPluginDescription(
         id = "icu.shabby.imgbot",
         name = "棒图bot",
-        version = "0.1.3"
+        version = "0.1.4"
     ) {
         author("shabby")
         info("jvm平台重构的棒图bot（群友黑历史处刑）")
@@ -100,7 +100,7 @@ object ImgbotMain : KotlinPlugin(
                         file.writeBytes(memory)
 
                         logger.info("[${group.id}]: [${sender.nick}(${sender.id})]发送的图片已经存储到${file.absolutePath}")
-                        group.sendMessage("存好啦~")
+                        group.sendMessage("加好啦~")
                     } finally {
                         stream?.close()
                     }
