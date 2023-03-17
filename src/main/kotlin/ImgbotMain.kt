@@ -11,7 +11,7 @@ object ImgbotMain : KotlinPlugin(
     JvmPluginDescription(
         id = "icu.shabby.imgbot",
         name = "棒图bot",
-        version = "0.2.1"
+        version = "0.2.2"
     ) {
         author("shabby")
         info("jvm平台重构的棒图bot（群友黑历史处刑）")
@@ -47,7 +47,11 @@ object ImgbotMain : KotlinPlugin(
                 }
                 val msg = messageStr.removePrefix(ImgbotConfig.saveImagePrefix)
                     .replace("[动画表情]", "").replace("[图片]", "")
-                    .trim()
+                    .replace("..", "").trim()
+                if(msg.isEmpty()) {
+                    logger.warning("msg为空，跳过存储:${messageStr}")
+                    return@subscribeAlways
+                }
                 val dir = groupDataPath.resolve(msg)
                 mkdirIfPathNonExists(dir)
                 val (success, fail, override) = saveImages(imgs, dir)
@@ -61,7 +65,7 @@ object ImgbotMain : KotlinPlugin(
             else if (messageStr.startsWith(ImgbotConfig.getImagePrefix)) {
                 val msg = messageStr.removePrefix(ImgbotConfig.saveImagePrefix).trim()
                 val dir = groupDataPath.resolve(msg)
-                if (!checkPathExists(dir)) return@subscribeAlways
+                if (!checkPathExists(dir) || msg.isEmpty()) return@subscribeAlways
 
                 val fileNames = dir.toFile().list()!!
                 val imgFileName = fileNames[_random.nextInt(fileNames.size)]
