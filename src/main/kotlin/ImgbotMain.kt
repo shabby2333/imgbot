@@ -11,7 +11,7 @@ object ImgbotMain : KotlinPlugin(
     JvmPluginDescription(
         id = "icu.shabby.imgbot",
         name = "棒图bot",
-        version = "0.2.3"
+        version = "0.3.0"
     ) {
         author("shabby")
         info("jvm平台重构的棒图bot（群友黑历史处刑）")
@@ -26,7 +26,16 @@ object ImgbotMain : KotlinPlugin(
             val messageStr = message.contentToString()
 
             // 查询群组对应文件夹是否存在，不存在则创建
-            val groupDataPath = resolveDataPath("${group.id}")
+            // 1. 如果开启全局共享文件夹，则全局优先
+            // 2. 否则如果群号在共享文件夹名单里，则使用共享的文件夹
+            // 3. 如果前两者都不符合，则使用本群群号
+            val imgGroupName =
+                if(ImgbotConfig.shareDirsInAllGroups)
+                    ImgbotConfig.shareDirsInAllGroupDirName
+                else if (ImgbotConfig.shareDirsGroups.containsKey(group.id) && !ImgbotConfig.shareDirsGroups[group.id].isNullOrEmpty())
+                    ImgbotConfig.shareDirsGroups[group.id]!!
+                else group.id.toString()
+            val groupDataPath = resolveDataPath(imgGroupName)
             val groupDataFolder = groupDataPath.toFile()
             mkdirIfPathNonExists(groupDataPath)
 
