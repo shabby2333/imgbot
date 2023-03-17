@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "icu.shabby"
-version = "0.2.0"
+version = "0.2.1"
 
 repositories {
     if (System.getenv("CI")?.toBoolean() != true) {
