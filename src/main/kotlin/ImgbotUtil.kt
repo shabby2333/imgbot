@@ -12,9 +12,6 @@ import kotlin.random.Random
 
 val _random = Random(System.currentTimeMillis())
 
-fun mkdirIfPathNonExists(path: String) {
-    return mkdirIfPathNonExists(File(path))
-}
 fun mkdirIfPathNonExists(path: Path) {
     return mkdirIfPathNonExists(path.toFile())
 }
@@ -23,10 +20,6 @@ fun mkdirIfPathNonExists(path: File) {
         path.mkdirs()
 }
 
-
-fun checkPathExists(path: String): Boolean {
-    return checkPathExists(File(path))
-}
 fun checkPathExists(path: Path): Boolean {
     return checkPathExists(path.toFile())
 }
@@ -67,3 +60,8 @@ suspend fun saveImages(images: List<Image>, dir: Path):Triple<Int, Int, Int> {
     return Triple(success, fail, override)
 }
 
+fun convertMsgToDirKey(msg: String, perfix: String):String {
+    return msg.removePrefix(perfix)
+        .replace("[动画表情]", "")
+        .replace("[图片]", "").trim()
+}
