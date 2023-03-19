@@ -10,4 +10,7 @@ object ImgbotConfig: AutoSavePluginConfig("config") {
     var shareDirsInAllGroups: Boolean by value(false)
     var shareDirsInAllGroupDirName: String by value("images")
     var shareDirsGroups: Map<Long, String> by value(HashMap())
+    var whiteListMode: Boolean by value(false)
+    var blackList: Array<Long> by value(emptyArray())
+    var whiteList: Array<Long> by value(emptyArray())
 }

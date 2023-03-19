@@ -11,7 +11,7 @@ object ImgbotMain : KotlinPlugin(
     JvmPluginDescription(
         id = "icu.shabby.imgbot",
         name = "棒图bot",
-        version = "0.3.0"
+        version = "0.3.1"
     ) {
         author("shabby")
         info("jvm平台重构的棒图bot（群友黑历史处刑）")
@@ -23,6 +23,13 @@ object ImgbotMain : KotlinPlugin(
 
         val eventChannel = GlobalEventChannel.parentScope(this)
         eventChannel.subscribeAlways<GroupMessageEvent> {
+            // 如白名单模式开启，则只判断是否在白名单，不在则返回
+            if(ImgbotConfig.whiteListMode && !ImgbotConfig.whiteList.any { e -> e == group.id })
+                return@subscribeAlways
+            // 否则，则只判断是否在黑名单，在则返回
+            else if(ImgbotConfig.blackList.any { e -> e == group.id })
+                return@subscribeAlways
+
             val messageStr = message.contentToString()
 
             // 查询群组对应文件夹是否存在，不存在则创建
