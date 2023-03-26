@@ -27,7 +27,7 @@ jobs:
 
       - run: |
           VERSION=${{ github.ref }}
-          VERSION=${VERSION#refs/tags/prerelease-}
+          VERSION=${VERSION#refs/tags/prerelease-v}
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       # Setup JDK
