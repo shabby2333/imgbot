@@ -1,11 +1,11 @@
-name: pre release
+name: release
 
 # Controls when the action will run. 
 on:
   # Triggers the workflow on push and pull request events but only for the master branch
   push:
     tags:
-      - 'prerelease-*'
+      - 'v*'
 
   # Allows to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -27,7 +27,7 @@ jobs:
 
       - run: |
           VERSION=${{ github.ref }}
-          VERSION=${VERSION#refs/tags/prerelease-v}
+          VERSION=${VERSION#refs/tags/v}
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       # Setup JDK
@@ -57,9 +57,9 @@ jobs:
       - name: Create PreRelease
         uses: softprops/action-gh-release@v1
         with:
-          name: pre-release v${{ env.VERSION }}
-          tag_name: prerelease-v${{ env.VERSION }}
+          name: release v${{ env.VERSION }}
+          tag_name: v${{ env.VERSION }}
           draft: false
-          prerelease: true
+          prerelease: false
           files: |
             build/mirai/imgbot-${{ env.VERSION }}.mirai2.jar
