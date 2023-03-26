@@ -63,4 +63,4 @@ jobs:
           draft: true
           prerelease: true
           files: |
-            build/mirai/imgbot-${{ env.VERSION }}-mirai2.jar
+            build/mirai/imgbot-${{ env.VERSION }}.mirai2.jar
