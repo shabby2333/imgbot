@@ -55,12 +55,13 @@ jobs:
           path: ./build/mirai/imgbot*.jar
 
       - name: Create PreRelease
-        uses: softprops/action-gh-release@v1
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          name: prelease-v${{ env.VERSION }}
-          tag_name: pre-v${{ env.VERSION }}
-          draft: true
+          name: prelease v${{ env.VERSION }}
+          tag_name: prelease-v${{ env.VERSION }}
+          draft: false
           prerelease: true
           files: |
             build/mirai/imgbot-${{ env.VERSION }}.mirai2.jar
