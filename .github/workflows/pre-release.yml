@@ -27,7 +27,7 @@ jobs:
 
       - run: |
           VERSION=${{ github.ref }}
-          VERSION=${VERSION#refs/tags/}
+          VERSION=${VERSION#refs/tags/prerelease-}
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       # Setup JDK
@@ -54,13 +54,13 @@ jobs:
           name: imgbot
           path: ./build/mirai/imgbot*.jar
 
-      - name: Create Release
+      - name: Create PreRelease
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: v${{ env.VERSION }}
-          tag_name: v${{ env.VERSION }}
+          name: prelease-v${{ env.VERSION }}
+          tag_name: pre-v${{ env.VERSION }}
           draft: true
           prerelease: true
           files: |
-            build/mirai/imgbot-${{ env.VERSION#prerelease- }}-mirai2.jar
+            build/mirai/imgbot-${{ env.VERSION }}-mirai2.jar
