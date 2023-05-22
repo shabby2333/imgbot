@@ -11,7 +11,7 @@ object ImgbotMain : KotlinPlugin(
     JvmPluginDescription(
         id = "icu.shabby.imgbot",
         name = "棒图bot",
-        version = "0.3.1"
+        version = "0.3.2"
     ) {
         author("shabby")
         info("jvm平台重构的棒图bot（群友黑历史处刑）")

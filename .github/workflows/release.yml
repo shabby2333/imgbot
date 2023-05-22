@@ -1,0 +1,65 @@
+name: release
+
+# Controls when the action will run. 
+on:
+  # Triggers the workflow on push and pull request events but only for the master branch
+  push:
+    tags:
+      - 'v*'
+
+  # Allows to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+
+  build:
+
+    name: Gradle-Build
+    
+    # The type of runner that the job will run on
+    runs-on: ubuntu-22.04
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - run: |
+          VERSION=${{ github.ref }}
+          VERSION=${VERSION#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      # Setup JDK
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: temurin
+          cache: gradle
+
+      # Validate Gradle Wrapper
+      - name: Gradle Wrapper Validation
+        uses: gradle/wrapper-validation-action@v1.0.5
+
+      # Build
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+      - name: Build with Gradle
+        run: ./gradlew buildPlugin
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: imgbot
+          path: ./build/mirai/imgbot*.jar
+
+      - name: Create PreRelease
+        uses: softprops/action-gh-release@v1
+        with:
+          name: release v${{ env.VERSION }}
+          tag_name: v${{ env.VERSION }}
+          draft: false
+          prerelease: false
+          files: |
+            build/mirai/imgbot-${{ env.VERSION }}.mirai2.jar
