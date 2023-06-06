@@ -65,3 +65,18 @@ fun convertMsgToDirKey(msg: String, perfix: String):String {
         .replace("[动画表情]", "")
         .replace("[图片]", "").trim()
 }
+
+val groupCdMap: HashMap<Long, Long> = hashMapOf()
+fun requestToken(groupId: Long): Boolean {
+    val interval =  if(ImgbotConfig.cdGroups.containsKey(groupId)) ImgbotConfig.cdGroups[groupId]!! else ImgbotConfig.cdInAllGroups
+    if(interval == 0L) return true
+
+    val now = System.currentTimeMillis() / 1000
+    val previous = if(groupCdMap.containsKey(groupId)) groupCdMap[groupId]!! else 0
+
+    if(previous + interval <= now) {
+        groupCdMap[groupId] = now
+        return true
+    }
+    return false
+}

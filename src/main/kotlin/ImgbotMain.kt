@@ -11,7 +11,7 @@ object ImgbotMain : KotlinPlugin(
     JvmPluginDescription(
         id = "icu.shabby.imgbot",
         name = "棒图bot",
-        version = "0.3.2"
+        version = "0.4.0"
     ) {
         author("shabby")
         info("jvm平台重构的棒图bot（群友黑历史处刑）")
@@ -28,6 +28,9 @@ object ImgbotMain : KotlinPlugin(
                 return@subscribeAlways
             // 否则，则只判断是否在黑名单，在则返回
             else if(ImgbotConfig.blackList.any { e -> e == group.id })
+                return@subscribeAlways
+
+            if(!requestToken(group.id))
                 return@subscribeAlways
 
             val messageStr = message.contentToString()

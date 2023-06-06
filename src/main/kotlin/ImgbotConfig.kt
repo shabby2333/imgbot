@@ -9,8 +9,10 @@ object ImgbotConfig: AutoSavePluginConfig("config") {
     var listDirsCommand: String by value("ls")
     var shareDirsInAllGroups: Boolean by value(false)
     var shareDirsInAllGroupDirName: String by value("images")
-    var shareDirsGroups: Map<Long, String> by value(HashMap())
+    var shareDirsGroups: Map<Long, String> by value(hashMapOf())
     var whiteListMode: Boolean by value(false)
     var blackList: Array<Long> by value(emptyArray())
     var whiteList: Array<Long> by value(emptyArray())
+    var cdInAllGroups: Long by value(0L)
+    var cdGroups: Map<Long, Long> by value(hashMapOf())
 }

@@ -1,5 +1,5 @@
 plugins {
-    val kotlinVersion = "1.6.10"
+    val kotlinVersion = "1.8.21"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "icu.shabby"
-version = "0.3.2"
+version = "0.4.0"
 
 repositories {
     if (System.getenv("CI")?.toBoolean() != true) {
